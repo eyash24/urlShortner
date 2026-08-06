@@ -1,0 +1,9 @@
+fastapi
+sqlalchemy
+aiosqlite
+greenlet
+pwdlib[argon2]
+pyjwt
+pydantic-settings
+pillow
+aiosmtplib
