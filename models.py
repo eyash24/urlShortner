@@ -28,6 +28,7 @@ class Url(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     long_url: Mapped[str] = mapped_column(String(2000), nullable=False)
+    short_url: Mapped[str] = mapped_column(String(50), nullable=False)
     purpose: Mapped[str | None] = mapped_column(
         String(200),
         nullable=True,
@@ -51,6 +52,7 @@ class Url(Base):
     logs: Mapped[list[clicklogs] | None] = relationship(back_populates='author')
 
 
+# Access groups section
 class AccessGroupManage(Base):
     __tablename__ = 'access_groups'
 
@@ -73,8 +75,8 @@ class GroupMails(Base):
 class clicklogs(Base):
     __tablename__ = 'click_logs'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    author = Mapped[Url] = relationship(back_populates='urls')
-    click_at = Mapped[DateTime] = mapped_column(
+    url_id: Mapped[int] = mapped_column(ForeignKey('urls.id'), nullable=False)
+    click_at: Mapped[DateTime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )

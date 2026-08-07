@@ -20,3 +20,8 @@ async def lifespan(_app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+app.get('/', include_in_schema=False)
+async def home(request: Request):
+    return {'message':'Welcome to URL Shortner'}
+
+
