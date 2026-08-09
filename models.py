@@ -66,7 +66,7 @@ class AccessGroupManage(Base):
 
 
 class GroupMails(Base):
-    __tablename__ = 'group_mails'
+    __tablename__ = 'access_mails'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     emails: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
     access_group: Mapped[AccessGroupManage] = relationship(back_populates='emails')
