@@ -1,0 +1,17 @@
+Project plan:
+Backend:
+    ☐ database 
+    ☐ config
+    ☐ models
+    ☐ schema
+    ☐ authentication
+    ☐ user admin api
+    ☐ urls api
+    ☐ main 
+    ☐ testing
+
+Frontend:
+    ☐ Home 
+    ☐ admin
+    ☐ Urls
+    ☐ Url Config

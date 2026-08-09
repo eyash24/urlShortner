@@ -12,3 +12,5 @@ wheels/
 # secret keys and configs
 .env
 
+# uv lock
+.lock
