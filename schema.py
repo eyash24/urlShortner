@@ -25,12 +25,27 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-# Access Group + Mail Schema
+# Access Mail Schema
 class AccessMails(BaseModel):
     email: EmailStr
+    status: bool
+    updated_at: datetime
+    access_group: int
 
+class AccessMailCreate(AccessMails):
+    pass
+
+class AccessMailUpdate(AccessMails):
+    pass
+
+class AccessMailLogs(AccessMails):
+    pass
+
+
+# Access Group Shema
 class AccessGroup(BaseModel):
     author: UserBase
+    group_name: str
     emails: list[AccessMails]
 
 class AccessGroupCreate(AccessGroup):
@@ -38,6 +53,11 @@ class AccessGroupCreate(AccessGroup):
 
 class AccessGroupResponse(AccessGroup):
     created_at: datetime
+
+class AccessGroupUpdate(BaseModel):
+    group_id: int
+    group_name: str | None = Field(default=None)
+    emails: list[AccessMails] | None = Field(default=None)
 
 
 # URL schema

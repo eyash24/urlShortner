@@ -1,10 +1,11 @@
 from __future__ import annotations
 from datetime import UTC, datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database import Base
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -57,21 +58,35 @@ class AccessGroupManage(Base):
     __tablename__ = 'access_groups'
 
     groupid: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    group_name: Mapped[str] = mapped_column(String(50), unique=True)
     author: Mapped[User] = relationship(back_populates='accessgroups')
     created_at = Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
-    emails = Mapped[list[GroupMails]] = relationship(back_populates='access_group', cascade='all, delete-orphan')
+    emails = Mapped[list[GroupMails]] = relationship(back_populates='access_group')
 
+class AccessLog(Base):
+    __tablename__ = "access_logs"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
+    groupid: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
+    access_status: Mapped[bool] = mapped_column(Boolean)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC)
+    )
 
 class GroupMails(Base):
     __tablename__ = 'access_mails'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     emails: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
     access_group: Mapped[AccessGroupManage] = relationship(back_populates='emails')
-    
+    status: bool = mapped_column(default=True)
+    updated_at: datetime
+    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_group.groupid'), nullable=False)
 
+    
 class clicklogs(Base):
     __tablename__ = 'click_logs'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
