@@ -15,13 +15,13 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(200), nullable=False)
 
-    urls = Mapped[list[Url]] = relationship(back_populates='author', cascade='all, delete-orphan')
+    urls = Mapped[list[Url]] | None = relationship(back_populates='author', cascade='all, delete-orphan')
 
     reset_tokens: Mapped[list[PasswordResetToken]] = relationship(
         back_populates='user',
         cascade='all, delete-orphan'
     )
-    accessgroups = Mapped[list[AccessGroupManage]] = relationship(back_populates='author')
+    access_groups = Mapped[list[AccessGroupManage]] | None = relationship(back_populates='author')
 
 
 class Url(Base):
@@ -44,34 +44,43 @@ class Url(Base):
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
-    time_of_death = Mapped[datetime] = mapped_column(
+    expires_at = Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False
     )
-    access_group: Mapped[AccessGroupManage | None] = relationship(back_populates='groupid')
+    access_group: Mapped[AccessGroupManage | None] = relationship(back_populates='group_id')
     author: Mapped[User] = relationship(back_populates='urls')
-    logs: Mapped[list[clicklogs] | None] = relationship(back_populates='author')
-
+    logs: Mapped[list[ClickLogs] | None] = relationship(back_populates='author')
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey('users.id'),
+        nullable=False,
+        index=True,
+    ) 
 
 # Access groups section
 class AccessGroupManage(Base):
     __tablename__ = 'access_groups'
 
-    groupid: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    group_id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     group_name: Mapped[str] = mapped_column(String(50), unique=True)
-    author: Mapped[User] = relationship(back_populates='accessgroups')
+    author: Mapped[User] = relationship(back_populates='access_groups')
     created_at = Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
     emails = Mapped[list[GroupMails]] = relationship(back_populates='access_group')
+    user_id = Mapped[int] = mapped_column(
+        ForeignKey('users.id'),
+        nullable=False,
+        index=True
+    )
 
 class AccessLog(Base):
     __tablename__ = "access_logs"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     email: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
-    groupid: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
-    access_status: Mapped[bool] = mapped_column(Boolean)
+    group_id: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
+    access_status: Mapped[str] = mapped_column(String, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
@@ -82,12 +91,12 @@ class GroupMails(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     emails: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
     access_group: Mapped[AccessGroupManage] = relationship(back_populates='emails')
-    status: bool = mapped_column(default=True)
-    updated_at: datetime
-    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_group.groupid'), nullable=False)
+    status: Mapped[bool] = mapped_column(default=True)
+    updated_at: Mapped[datetime]
+    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_group.group_id'), nullable=False)
 
     
-class clicklogs(Base):
+class ClickLogs(Base):
     __tablename__ = 'click_logs'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     url_id: Mapped[int] = mapped_column(ForeignKey('urls.id'), nullable=False)
@@ -95,6 +104,7 @@ class clicklogs(Base):
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
+    method: Mapped[str] = mapped_column(String(45), nullable=False)
 
 class PasswordResetToken(Base):
     __tablename__ = 'password_reset_token'

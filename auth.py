@@ -52,7 +52,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
 
 def verify_access_token(token: str) -> str | None:
     try:
-        payload  =jwt.decode(
+        payload = jwt.decode(
             token,
             settings.secret_key.get_secret_value(),
             algorithms=[settings.algorithm],

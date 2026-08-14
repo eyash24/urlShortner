@@ -16,10 +16,12 @@ class UserPublic(BaseModel):
 
 class UserPrivate(UserPublic):
     email: EmailStr = Field(max_length=120)
+    access_group: list[AccessGroup] | None
 
 class UserUpdate(BaseModel):
     username: str | None = Field(default=None,  min_length=1, max_length=50)
     email: EmailStr | None = Field(default=None, max_length=120)
+    access_group: list[AccessGroup] | None 
 
 class Token(BaseModel):
     access_token: str
@@ -86,6 +88,13 @@ class URLUpdate(BaseModel):
 # Pagination schema 
 class PaginatedURLResponse(BaseModel):
     urls: list[URLResponse]
+    total: int
+    skip: int
+    limit: int
+    has_more: bool
+
+class PaginatedURLAccessResponse(BaseModel):
+    access_groups: list[AccessGroup]
     total: int
     skip: int
     limit: int

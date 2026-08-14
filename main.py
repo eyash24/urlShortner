@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from database import Base, engine, get_url_db
+from routers import users, urls, access_groups
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
@@ -25,3 +26,4 @@ async def home(request: Request):
     return {'message':'Welcome to URL Shortner'}
 
 
+app.include_router(users.router, prefix='/api/users', tags=['user'])

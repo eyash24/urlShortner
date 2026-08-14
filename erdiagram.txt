@@ -1,0 +1,71 @@
+
+@startuml
+class Users {
+  int id
+  string username
+  string email
+  string password_hash
+  list[Urls] urls
+  list[PasswordResetToken] reset_token
+  list[AccessGroupManage] accessgroups
+}
+
+class Urls{
+  int id
+  string long_url
+  string short_url
+  string purpose
+  int rate_limit
+  datetime created_at
+  datetime time_of_death
+  AccessGroupManage access_group
+  User author
+  clicklogs logs
+  int user_id
+}
+
+class AccessGroupManage {
+  int groupid
+  string group_name
+  User author
+  datetime created_at
+  GroupMails emails
+  int user_id
+}
+
+class AccessLog {
+  int id
+  string email
+  int groupid
+  bool access_status
+  datetime updated_at
+}
+
+class GroupMails {
+  int id
+  string emails
+  AccessGroupManage access_group
+  bool status
+  datetime updated_at
+  int access_group_id
+}
+
+class clicklogs {
+  int id
+  int url_id
+  datetime click_at
+}
+
+class PasswordResetToken {
+  int id
+  int user_id
+  string token_hash
+  datetime expires_at
+  datetime created_at
+  User user
+}
+
+
+
+@enduml
+
