@@ -1,18 +1,24 @@
 Project plan:
 Backend:
-    ☐ database 
-    ☐ config
-    ☐ models
-    ☐ schema
+    ✔ database @done(26-08-15 14:25)
+    ✔ config @done(26-08-15 14:25)
+    ✔ models @done(26-08-15 14:25)
+    ✔ schema @done(26-08-15 14:25)
     ✔ authentication @done(26-08-14 11:33)
-    ☐ Access Management 
-    ☐ user admin api
-    ☐ urls api
+    ✔ urls api @done(26-08-15 14:25)
     ☐ main 
     ☐ testing
+    ☐ access_groups
+    ☐ analytics
+    ☐ mail config
+    ✔ EER Diagram @done(26-08-15 14:27)
 
 Frontend:
     ☐ Home 
     ☐ admin
     ☐ Urls
-    ☐ Url Config
+    ☐ URL config
+    ☐ Access Groups 
+    ☐ Access Group config
+    ☐ Analytics
+

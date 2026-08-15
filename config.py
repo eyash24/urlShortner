@@ -25,15 +25,9 @@ class Settings(BaseSettings):
 
     frontend_url: str = 'http://localhost:8000'
 
+    secrets_hash_hex = 32
+
 
 settings = Settings()
 
 
-= Index(
-    Filter(
-        M:M,
-        ISNUMBER(Search(B3,L:L)), 
-        ISNUMBER(Sheet5!A3,Sheet5!L:Sheet5!G4), 
-        "NA"
-    )
-)

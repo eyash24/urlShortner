@@ -16,12 +16,11 @@ class UserPublic(BaseModel):
 
 class UserPrivate(UserPublic):
     email: EmailStr = Field(max_length=120)
-    access_group: list[AccessGroup] | None
+    access_group: list[AccessGroupResponse] | None
 
 class UserUpdate(BaseModel):
     username: str | None = Field(default=None,  min_length=1, max_length=50)
     email: EmailStr | None = Field(default=None, max_length=120)
-    access_group: list[AccessGroup] | None 
 
 class Token(BaseModel):
     access_token: str
@@ -51,39 +50,45 @@ class AccessGroup(BaseModel):
     emails: list[AccessMails]
 
 class AccessGroupCreate(AccessGroup):
-    pass
+    user_id: int
 
 class AccessGroupResponse(AccessGroup):
     created_at: datetime
+    id: int
+    user_id: int
 
 class AccessGroupUpdate(BaseModel):
-    group_id: int
+    id: int
     group_name: str | None = Field(default=None)
     emails: list[AccessMails] | None = Field(default=None)
-
 
 # URL schema
 class URLBase(BaseModel):
     purpose: str = Field(min_length=1, max_length=100)
     long_url: str = Field(min_length=1, max_length=1000)
     rate_limit: int | None = Field(default=None)
-    duration: int
+    expires_at: datetime
 
 class URLCreate(URLBase):
+    purpose: str
+    author: UserPrivate
     pass
 
 class URLResponse(URLBase):
     model_config = ConfigDict(from_attributes=True)
     short_url: str
-    access_group: AccessGroup
+    access_group: AccessGroupResponse
     created_at: datetime
     expires_at: datetime
+    purpose: str
+
 
 class URLUpdate(BaseModel):
-    acces_group: AccessGroup | None
-    duration: int | None
+    access_group_id: AccessGroup | None
+    expires_at: datetime | None
     rate_limit: int | None
     purpose: str | None = Field(min_length=1, max_length=100)
+    long_url: str | None = Field(min_length=1, max_length=1000)
 
 # Pagination schema 
 class PaginatedURLResponse(BaseModel):
@@ -94,7 +99,7 @@ class PaginatedURLResponse(BaseModel):
     has_more: bool
 
 class PaginatedURLAccessResponse(BaseModel):
-    access_groups: list[AccessGroup]
+    access_groups: list[AccessGroupResponse]
     total: int
     skip: int
     limit: int
@@ -116,4 +121,17 @@ class ChangePasswordRequest(BaseModel):
 class ClickLogs(BaseModel):
     url_id: URLResponse
     click_at: datetime
+    method: str
 
+class AppendClickLog(ClickLogs):
+    pass
+
+
+class AccessLog(BaseModel):
+    email: str
+    group_id: int
+    access_status: str
+    updated_at: datetime
+
+class AppendAccessLog(BaseModel):
+    pass

@@ -1,11 +1,10 @@
 from __future__ import annotations
 from datetime import UTC, datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, Boolean
+from sqlalchemy import DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database import Base
-
 
 class User(Base):
     __tablename__ = 'users'
@@ -21,7 +20,7 @@ class User(Base):
         back_populates='user',
         cascade='all, delete-orphan'
     )
-    access_groups = Mapped[list[AccessGroupManage]] | None = relationship(back_populates='author')
+    access_groups = Mapped[list[AccessGroupManage]] | None = relationship(back_populates='author', cascade='all, delete-orphan')
 
 
 class Url(Base):
@@ -48,20 +47,24 @@ class Url(Base):
         DateTime(timezone=True),
         nullable=False
     )
-    access_group: Mapped[AccessGroupManage | None] = relationship(back_populates='group_id')
+    access_group: Mapped[AccessGroupManage | None ] = relationship(back_populates='id')
     author: Mapped[User] = relationship(back_populates='urls')
-    logs: Mapped[list[ClickLogs] | None] = relationship(back_populates='author')
     user_id: Mapped[int] = mapped_column(
         ForeignKey('users.id'),
         nullable=False,
         index=True,
     ) 
+    access_group_id: Mapped[int] = mapped_column(
+        ForeignKey('access_groups.id'),
+        nullable=False,
+        index=True
+    )
 
 # Access groups section
 class AccessGroupManage(Base):
     __tablename__ = 'access_groups'
 
-    group_id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     group_name: Mapped[str] = mapped_column(String(50), unique=True)
     author: Mapped[User] = relationship(back_populates='access_groups')
     created_at = Mapped[datetime] = mapped_column(
@@ -79,7 +82,7 @@ class AccessLog(Base):
     __tablename__ = "access_logs"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     email: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
-    group_id: Mapped[int] = mapped_column(Integer, unique=False, nullable=False)
+    group_id: Mapped[int] = mapped_column(ForeignKey('access_groups.id'), nullable=False)
     access_status: Mapped[str] = mapped_column(String, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -93,7 +96,7 @@ class GroupMails(Base):
     access_group: Mapped[AccessGroupManage] = relationship(back_populates='emails')
     status: Mapped[bool] = mapped_column(default=True)
     updated_at: Mapped[datetime]
-    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_group.group_id'), nullable=False)
+    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_group.id'), nullable=False)
 
     
 class ClickLogs(Base):
