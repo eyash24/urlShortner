@@ -65,13 +65,17 @@ class AccessGroupManage(Base):
     __tablename__ = 'access_groups'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    group_name: Mapped[str] = mapped_column(String(50), unique=True)
+    group_name: Mapped[str] = mapped_column(String(50))
     author: Mapped[User] = relationship(back_populates='access_groups')
     created_at = Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
-    emails = Mapped[list[GroupMails]] = relationship(back_populates='access_group')
+    expires_at = Mapped[datetime] = mapped_column(
+        DateTime(timezone=UTC),
+        nullable=False
+    )
+    emails = Mapped[list[AccessMails] | None] = relationship(back_populates='access_group', cascade='all, delete-orphan')
     user_id = Mapped[int] = mapped_column(
         ForeignKey('users.id'),
         nullable=False,
@@ -82,22 +86,21 @@ class AccessLog(Base):
     __tablename__ = "access_logs"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     email: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
-    group_id: Mapped[int] = mapped_column(ForeignKey('access_groups.id'), nullable=False)
+    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_groups.id'), nullable=False)
     access_status: Mapped[str] = mapped_column(String, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
 
-class GroupMails(Base):
+class AccessMails(Base):
     __tablename__ = 'access_mails'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    emails: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
+    email: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
     access_group: Mapped[AccessGroupManage] = relationship(back_populates='emails')
     status: Mapped[bool] = mapped_column(default=True)
     updated_at: Mapped[datetime]
     access_group_id: Mapped[int] = mapped_column(ForeignKey('access_group.id'), nullable=False)
-
     
 class ClickLogs(Base):
     __tablename__ = 'click_logs'

@@ -9,7 +9,6 @@ from fastapi import (
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import delete as sql_delete
 
 import models
 from database import get_url_db
@@ -48,9 +47,7 @@ async def create_url(
     db: Annotated[AsyncSession, Depends(get_url_db)],
     access_group_id: int 
 ):
-
     short_url = create_short_url()
-    
     new_url = models.Url(
         long_url = url.long_url,
         short_url = short_url,

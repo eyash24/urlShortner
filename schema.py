@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, EmailStr
 
@@ -29,9 +31,8 @@ class Token(BaseModel):
 # Access Mail Schema
 class AccessMails(BaseModel):
     email: EmailStr
-    status: bool
-    updated_at: datetime
-    access_group: int
+    access_group_id: int
+    access_status: bool
 
 class AccessMailCreate(AccessMails):
     pass
@@ -39,28 +40,27 @@ class AccessMailCreate(AccessMails):
 class AccessMailUpdate(AccessMails):
     pass
 
-class AccessMailLogs(AccessMails):
-    pass
+class AccessMailResponse(AccessMails):
+    id: int
+    updated_at: datetime
 
 
 # Access Group Shema
 class AccessGroup(BaseModel):
-    author: UserBase
     group_name: str
-    emails: list[AccessMails]
+    expires_at: datetime
+    user_id: int
 
 class AccessGroupCreate(AccessGroup):
-    user_id: int
+    pass
 
 class AccessGroupResponse(AccessGroup):
     created_at: datetime
     id: int
-    user_id: int
 
 class AccessGroupUpdate(BaseModel):
-    id: int
     group_name: str | None = Field(default=None)
-    emails: list[AccessMails] | None = Field(default=None)
+    expires_at: datetime | None
 
 # URL schema
 class URLBase(BaseModel):
