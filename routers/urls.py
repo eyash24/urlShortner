@@ -19,7 +19,7 @@ from schema import (
 )
 
 from auth import CurrentUser
-from utils import create_short_url
+from utils.url_utils import create_short_url
 
 router = APIRouter()
 

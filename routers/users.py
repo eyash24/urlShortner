@@ -44,7 +44,7 @@ from auth import (
 from config import settings
 from starlette.concurrency import run_in_threadpool
 
-from email_utils import send_password_reset_email
+from utils.email_utils import send_password_reset_email
 
 
 router = APIRouter()
