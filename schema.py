@@ -18,7 +18,7 @@ class UserPublic(BaseModel):
 
 class UserPrivate(UserPublic):
     email: EmailStr = Field(max_length=120)
-    access_group: list[AccessGroupResponse] | None
+    access_group: list[AccessGroupResponse] | None = Field(default=None)
 
 class UserUpdate(BaseModel):
     username: str | None = Field(default=None,  min_length=1, max_length=50)
@@ -37,8 +37,11 @@ class AccessMails(BaseModel):
 class AccessMailCreate(AccessMails):
     pass
 
-class AccessMailUpdate(AccessMails):
-    pass
+class AccessMailUpdate(BaseModel):
+    email: EmailStr | None = Field(default=None, max_length=120)
+    access_group_id: int | None = Field(default=None)
+    access_status: bool | None = Field(default=None)
+
 
 class AccessMailResponse(AccessMails):
     id: int
@@ -47,9 +50,8 @@ class AccessMailResponse(AccessMails):
 
 # Access Group Shema
 class AccessGroup(BaseModel):
-    group_name: str
+    group_name: str = Field(min_length=1, max_length=20)
     expires_at: datetime
-    user_id: int
 
 class AccessGroupCreate(AccessGroup):
     pass
@@ -57,38 +59,37 @@ class AccessGroupCreate(AccessGroup):
 class AccessGroupResponse(AccessGroup):
     created_at: datetime
     id: int
+    user_id: int
 
 class AccessGroupUpdate(BaseModel):
-    group_name: str | None = Field(default=None)
-    expires_at: datetime | None
+    group_name: str | None = Field(default=None, min_length=1, max_length=20)
+    expires_at: datetime | None = Field(default=None)
 
 # URL schema
 class URLBase(BaseModel):
     purpose: str = Field(min_length=1, max_length=100)
-    long_url: HttpUrl 
+    long_url: str = Field(min_length=1, max_length=1000) 
     rate_limit: int | None = Field(default=None)
     expires_at: datetime
 
 class URLCreate(URLBase):
-    purpose: str
-    author: UserPrivate
     pass
 
 class URLResponse(URLBase):
-    model_config = ConfigDict(from_attributes=True)
+    id: int
     short_url: str
-    access_group: AccessGroupResponse
     created_at: datetime
     expires_at: datetime
     purpose: str
-
+    access_group_id: int | None = Field(default=None)
+    user_id: int
 
 class URLUpdate(BaseModel):
-    access_group_id: AccessGroup | None
-    expires_at: datetime | None
-    rate_limit: int | None
-    purpose: str | None = Field(min_length=1, max_length=100)
-    long_url: HttpUrl | None
+    access_group_id: int | None  = Field(default=None)
+    expires_at: datetime | None = Field(default=None)
+    rate_limit: int | None = Field(default=None)
+    purpose: str | None = Field(default=None, min_length=1, max_length=100)
+    long_url: str | None  = Field(default=None, min_length=1, max_length=1000) 
 
 # Pagination schema 
 class PaginatedURLResponse(BaseModel):
@@ -119,7 +120,7 @@ class ChangePasswordRequest(BaseModel):
 
 # Logs
 class ClickLogs(BaseModel):
-    url_id: URLResponse
+    url_id: int
 
 class CreateClickLog(ClickLogs):
     pass

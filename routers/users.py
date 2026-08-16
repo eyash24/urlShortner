@@ -44,7 +44,7 @@ from auth import (
 from config import settings
 from starlette.concurrency import run_in_threadpool
 
-from utils.email_utils import send_password_reset_email
+from utils.email_utils import send_password_reset_mail
 
 
 router = APIRouter()
@@ -150,7 +150,7 @@ async def forgot_password(
         await db.commit()
 
         background_tasks.add_task(
-            send_password_reset_email,
+            send_password_reset_mail,
             to_email=user.email,
             username=user.username,
             token=token
@@ -249,7 +249,7 @@ async def get_user(user_id:int, db: Annotated[AsyncSession, Depends(get_url_db)]
     )
 
 
-@router.patch('/{user_id}', response_models=UserPrivate)
+@router.patch('/{user_id}', response_model=UserPrivate)
 async def update_user(
     user_id: int,
     user_update: UserUpdate,

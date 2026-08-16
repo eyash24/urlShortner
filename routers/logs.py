@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import models
 from database import get_url_db
 from schema import (
-    CreateClickLogs,
+    CreateClickLog,
     CreateAccessLog,
     PaginatedAccessLogResponse,
     PaginatedClickLogResponse,
@@ -86,7 +86,7 @@ async def get_url_click_logs(
     response_model=ClickLogResponse
 )
 async def create_clicklog(
-    click_log_data: CreateClickLogs ,
+    click_log_data: CreateClickLog ,
     db: Annotated[AsyncSession, Depends(get_url_db)]
 ):
     new_click_log = models.ClickLogs(

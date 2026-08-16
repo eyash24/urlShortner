@@ -1,4 +1,7 @@
 from typing import Annotated
+import secrets
+
+from config import settings
 
 from fastapi import (
     APIRouter,
@@ -38,16 +41,17 @@ async def get_urls(
 
 @router.post(
     '',
-    response_models=URLResponse,
+    response_model=URLResponse,
     status_code=status.HTTP_201_CREATED
 )
 async def create_url(
     url: URLCreate, 
     current_user: CurrentUser, 
     db: Annotated[AsyncSession, Depends(get_url_db)],
-    access_group_id: int 
-):
-    short_url = create_short_url()
+    access_group_id: int = None
+):  
+
+    short_url = await create_short_url(db)
     new_url = models.Url(
         long_url = url.long_url,
         short_url = short_url,

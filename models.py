@@ -44,21 +44,20 @@ class Url(Base):
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
-    expires_at = Mapped[datetime] = mapped_column(
+    expires_at : Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False
     )
-    access_group: Mapped[AccessGroupManage | None ] = relationship(back_populates='id')
+    access_group: Mapped[AccessGroupManage] = relationship(back_populates='url')
     author: Mapped[User] = relationship(back_populates='urls')
     user_id: Mapped[int] = mapped_column(
         ForeignKey('users.id'),
         nullable=False,
         index=True,
     ) 
-    access_group_id: Mapped[int] = mapped_column(
+    access_group_id: Mapped[int | None] = mapped_column(
         ForeignKey('access_groups.id'),
-        nullable=False,
-        index=True
+        nullable=True
     )
     
 
@@ -69,32 +68,33 @@ class AccessGroupManage(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     group_name: Mapped[str] = mapped_column(String(50))
     author: Mapped[User] = relationship(back_populates='access_groups')
-    created_at = Mapped[datetime] = mapped_column(
+    created_at : Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
-    expires_at = Mapped[datetime] = mapped_column(
+    expires_at : Mapped[datetime] = mapped_column(
         DateTime(timezone=UTC),
         nullable=False
     )
-    emails: Mapped[list[AccessMails] | None] = relationship(back_populates='access_group', cascade='all, delete-orphan')
-    user_id = Mapped[int] = mapped_column(
+    emails: Mapped[list[AccessMails]] = relationship(back_populates='access_group', cascade='all, delete-orphan')
+    user_id: Mapped[int] = mapped_column(
         ForeignKey('users.id'),
         nullable=False,
         index=True
     )
+    url: Mapped[Url] = relationship(back_populates='access_group')
 
 class AccessMails(Base):
     __tablename__ = 'access_mails'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     email: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
-    access_group: Mapped[AccessGroupManage] = relationship(back_populates='emails')
+    access_group: Mapped[AccessGroupManage | None] = relationship(back_populates='emails')
     status: Mapped[bool] = mapped_column(default=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
-    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_group.id'), nullable=False)
+    access_group_id: Mapped[int | None] = mapped_column(ForeignKey('access_groups.id'), nullable=True)
 
 
 # logs section
@@ -134,4 +134,4 @@ class PasswordResetToken(Base):
         default=lambda: datetime.now(UTC)
     )
 
-    user: Mapped[User] = relationship(back_populates='reset_token')
+    user: Mapped[User] = relationship(back_populates='reset_tokens')

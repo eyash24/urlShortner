@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def create_short_url(
-    db: Annotated[AsyncSession, Depends(get_url_db)]
+    db: AsyncSession
 ) -> str:
     while True:
         hash_hex = secrets.token_hex(settings.secrets_hash_hex)
@@ -22,7 +22,7 @@ async def create_short_url(
             .where(models.Url.short_url == short_url)
         )
 
-        url = result.scalar().first()
+        url = result.scalars().first()
 
         if not url:
             return short_url
