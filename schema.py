@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, EmailStr
+from pydantic import BaseModel, ConfigDict, Field, EmailStr, HttpUrl
 
 # User schema
 class UserBase(BaseModel):
@@ -65,7 +65,7 @@ class AccessGroupUpdate(BaseModel):
 # URL schema
 class URLBase(BaseModel):
     purpose: str = Field(min_length=1, max_length=100)
-    long_url: str = Field(min_length=1, max_length=1000)
+    long_url: HttpUrl 
     rate_limit: int | None = Field(default=None)
     expires_at: datetime
 
@@ -88,7 +88,7 @@ class URLUpdate(BaseModel):
     expires_at: datetime | None
     rate_limit: int | None
     purpose: str | None = Field(min_length=1, max_length=100)
-    long_url: str | None = Field(min_length=1, max_length=1000)
+    long_url: HttpUrl | None
 
 # Pagination schema 
 class PaginatedURLResponse(BaseModel):
@@ -98,7 +98,7 @@ class PaginatedURLResponse(BaseModel):
     limit: int
     has_more: bool
 
-class PaginatedURLAccessResponse(BaseModel):
+class PaginatedAccessGroupResponse(BaseModel):
     access_groups: list[AccessGroupResponse]
     total: int
     skip: int
@@ -120,18 +120,38 @@ class ChangePasswordRequest(BaseModel):
 # Logs
 class ClickLogs(BaseModel):
     url_id: URLResponse
-    click_at: datetime
-    method: str
 
-class AppendClickLog(ClickLogs):
+class CreateClickLog(ClickLogs):
     pass
+
+class ClickLogResponse(ClickLogs):
+    id: int
+    click_at: datetime
+
+class PaginatedClickLogResponse(BaseModel):
+    click_logs: list[ClickLogs]
+    total: int
+    skip: int
+    limit: int
+    has_more: bool
 
 
 class AccessLog(BaseModel):
     email: str
-    group_id: int
+    access_group_id: int
     access_status: str
-    updated_at: datetime
 
-class AppendAccessLog(BaseModel):
+class CreateAccessLog(AccessLog):
     pass
+
+class AccessLogResponse(AccessLog):
+    id: int
+    updated_at: datetime
+    
+
+class PaginatedAccessLogResponse(BaseModel):
+    access_logs: list[AccessLogResponse]
+    total: int
+    skip: int
+    limit: int
+    has_more: bool

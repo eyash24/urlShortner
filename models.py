@@ -14,13 +14,14 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(200), nullable=False)
 
-    urls = Mapped[list[Url]] | None = relationship(back_populates='author', cascade='all, delete-orphan')
+    urls: Mapped[list[Url]] = relationship(back_populates='author', cascade='all, delete-orphan')
 
     reset_tokens: Mapped[list[PasswordResetToken]] = relationship(
         back_populates='user',
         cascade='all, delete-orphan'
     )
-    access_groups = Mapped[list[AccessGroupManage]] | None = relationship(back_populates='author', cascade='all, delete-orphan')
+    access_groups: Mapped[list[AccessGroupManage]] = relationship(back_populates='author', cascade='all, delete-orphan')
+    
 
 
 class Url(Base):
@@ -59,6 +60,7 @@ class Url(Base):
         nullable=False,
         index=True
     )
+    
 
 # Access groups section
 class AccessGroupManage(Base):
@@ -75,22 +77,11 @@ class AccessGroupManage(Base):
         DateTime(timezone=UTC),
         nullable=False
     )
-    emails = Mapped[list[AccessMails] | None] = relationship(back_populates='access_group', cascade='all, delete-orphan')
+    emails: Mapped[list[AccessMails] | None] = relationship(back_populates='access_group', cascade='all, delete-orphan')
     user_id = Mapped[int] = mapped_column(
         ForeignKey('users.id'),
         nullable=False,
         index=True
-    )
-
-class AccessLog(Base):
-    __tablename__ = "access_logs"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    email: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
-    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_groups.id'), nullable=False)
-    access_status: Mapped[str] = mapped_column(String, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(UTC)
     )
 
 class AccessMails(Base):
@@ -99,9 +90,25 @@ class AccessMails(Base):
     email: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
     access_group: Mapped[AccessGroupManage] = relationship(back_populates='emails')
     status: Mapped[bool] = mapped_column(default=True)
-    updated_at: Mapped[datetime]
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC)
+    )
     access_group_id: Mapped[int] = mapped_column(ForeignKey('access_group.id'), nullable=False)
-    
+
+
+# logs section
+class AccessLog(Base):
+    __tablename__ = "access_logs"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String(120), unique=False, nullable=True)
+    access_group_id: Mapped[int] = mapped_column(ForeignKey('access_groups.id'), nullable=False)
+    access_status: Mapped[str] = mapped_column(String, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC)
+    )
+
 class ClickLogs(Base):
     __tablename__ = 'click_logs'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -110,8 +117,9 @@ class ClickLogs(Base):
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
     )
-    method: Mapped[str] = mapped_column(String(45), nullable=False)
 
+    
+# auth section
 class PasswordResetToken(Base):
     __tablename__ = 'password_reset_token'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

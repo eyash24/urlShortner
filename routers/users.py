@@ -26,7 +26,7 @@ from schema import (
     ChangePasswordRequest,
     ForgotPasswordRequest,
     ResetPasswordRequest,
-    PaginatedURLAccessResponse,
+    PaginatedAccessGroupResponse,
 )
 
 from datetime import timedelta, UTC, datetime
@@ -334,7 +334,7 @@ async def delete_user(
     await db.delete(user)
     await db.commit()
 
-
+# TODO: Add currentUser check in below function
 @router.get('/{user_id}/urls', response_model=PaginatedURLResponse)
 async def get_user_urls(
     user_id: int,
@@ -369,7 +369,8 @@ async def get_user_urls(
     urls = result.scalars().all()
     return urls
 
-@router.get('/{user_id}/access_groups', response_model=PaginatedURLAccessResponse)
+# TODO: Add currentUser check in below function
+@router.get('/{user_id}/access_groups', response_model=PaginatedAccessGroupResponse)
 async def get_user_access_groups(
     user_id: int,
     db: Annotated[AsyncSession, Depends(get_url_db)],

@@ -12,9 +12,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     urls_per_page: int = 15
-
-    url_duration = 60
-    url_rate_limit = 50
+    url_duration: int = 60
+    url_rate_limit: int = 50
 
     mail_server: str = 'localhost'
     mail_port: int = 100
@@ -25,7 +24,13 @@ class Settings(BaseSettings):
 
     frontend_url: str = 'http://localhost:8000'
 
-    secrets_hash_hex = 32
+    secrets_hash_hex:int = 32
+
+    access_group_per_page: int = 15
+
+    click_log_per_page: int = 25
+    access_log_per_page: int = 25
+
 
 
 settings = Settings()

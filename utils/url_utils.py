@@ -26,4 +26,4 @@ async def create_short_url(
 
         if not url:
             return short_url
-    
+

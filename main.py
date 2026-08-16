@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from database import Base, engine, get_url_db
-from routers import users, urls, access_groups, analytics
+from routers import logs, users, urls, access_groups
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
@@ -28,4 +28,4 @@ async def home(request: Request):
 app.include_router(users.router, prefix='/api/users', tags=['user'])
 app.include_router(urls.router, prefix='/api/urls', tags=['url'])
 app.include_router(access_groups.router, prefix='/api/access_groups', tags=['access_group'])
-app.include_router(analytics.router, prefix='/api/analytics', tags=['analytic'])
+app.include_router(logs.router, prefix='/api/analytics', tags=['analytic'])

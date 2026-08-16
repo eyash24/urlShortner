@@ -25,7 +25,7 @@ from auth import CurrentUser
 router = APIRouter()
 
 # Access Group Management
-@router.get('/', response_model=list[AccessGroupResponse])
+@router.get('', response_model=list[AccessGroupResponse])
 async def get_access_groups(
     db: Annotated[AsyncSession, Depends(get_url_db)],
     current_user: CurrentUser
@@ -148,7 +148,7 @@ async def update_access_group_full(
     await db.refresh(access_group)
     
 
-@router.patch('/access_group_id', response_model=AccessGroupResponse)
+@router.patch('/{access_group_id}', response_model=AccessGroupResponse)
 async def update_access_group_partial(
     access_group_id: int,
     access_group_data: AccessGroupUpdate,
@@ -229,7 +229,7 @@ async def delete_access_group(
     
     
 # Access Mail
-@router.get('/{access_group_id}', response_model=list[AccessMailResponse])
+@router.get('/access-mail/{access_group_id}', response_model=list[AccessMailResponse])
 async def get_access_mails(
     access_group_id: int,
     current_user: CurrentUser,
@@ -261,7 +261,7 @@ async def get_access_mails(
     return mails
 
 
-@router.post('/{access_group_id}', response_model=list[AccessMailResponse])
+@router.post('/access-mail/{access_group_id}', response_model=list[AccessMailResponse], status_code=status.HTTP_201_CREATED)
 async def create_access_mails_bulk(
     access_group_id: int,
     current_user: CurrentUser,
@@ -299,7 +299,7 @@ async def create_access_mails_bulk(
 
     return access_mail_created
 
-@router.delete('/{access_mail_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/access-mail/{access_mail_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_access_mail_via_id(
     access_mail_id: int,
     current_user: CurrentUser,

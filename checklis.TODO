@@ -8,8 +8,9 @@ Backend:
     ✔ urls api @done(26-08-15 14:25)
     ☐ main 
     ☐ testing
-    ☐ access_groups
+    ✔ access_groups @done(26-08-16 12:29)
     ☐ analytics
+    ✔ logs @done(26-08-16 14:09)
     ☐ mail config
     ✔ EER Diagram @done(26-08-15 14:27)
 
@@ -22,3 +23,15 @@ Frontend:
     ☐ Access Group config
     ☐ Analytics
 
+Tasks:
+    ☐ Move jwt token from localstorage to sessionstorage
+    ☐ dry run and debug backend
+    ☐ add current_user check to all the db related functions
+    ☐ Research on email based access grant feature required for access management
+    ☐ research on rate limit feature implementation
+    ☐ research on fastapi pytest ( refer corey schafer's video )
+    ☐ build analytics api 
+    ☐ add mailtrap server 
+
+    ☐ start angular basics 
+    ☐ check out material UI 
