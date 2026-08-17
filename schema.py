@@ -47,6 +47,9 @@ class AccessMailResponse(AccessMails):
     id: int
     updated_at: datetime
 
+class AccessMailPublic(BaseModel):
+    emails: list[EmailStr]
+    open: bool
 
 # Access Group Shema
 class AccessGroup(BaseModel):
@@ -90,6 +93,10 @@ class URLUpdate(BaseModel):
     rate_limit: int | None = Field(default=None)
     purpose: str | None = Field(default=None, min_length=1, max_length=100)
     long_url: str | None  = Field(default=None, min_length=1, max_length=1000) 
+
+class URLPublic(BaseModel):
+    long_ur: str  
+
 
 # Pagination schema 
 class PaginatedURLResponse(BaseModel):

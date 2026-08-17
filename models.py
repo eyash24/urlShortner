@@ -29,7 +29,7 @@ class Url(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     long_url: Mapped[str] = mapped_column(String(2000), nullable=False)
-    short_url: Mapped[str] = mapped_column(String(50), nullable=False)
+    short_url: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     purpose: Mapped[str | None] = mapped_column(
         String(200),
         nullable=True,

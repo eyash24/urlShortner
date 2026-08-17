@@ -18,7 +18,8 @@ from database import get_url_db
 from schema import (
     URLCreate,
     URLResponse,
-    URLUpdate
+    URLUpdate,
+    URLPublic
 )
 
 from auth import CurrentUser
@@ -189,4 +190,20 @@ async def delete_url(
     await db.commit()
     
 
+@router.get('/retrieve_url/{short_url}', response_model=URLPublic)
+async def retreive_long_url(
+    short_url: str,
+    db: Annotated[AsyncSession, Depends(get_url_db)]
+):
+    result = await db.execute(
+        select(models.Url.long_url)
+        .where(models.Url.short_url == short_url)
+    )
+    long_url = result.scalars().first()
+    return long_url
+
+
+
+
+    
 

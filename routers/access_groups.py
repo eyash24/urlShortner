@@ -17,10 +17,12 @@ from schema import (
     AccessGroupCreate,
     AccessGroupUpdate,
     AccessMailCreate,
-    AccessMailResponse
+    AccessMailResponse,
+    AccessMailPublic
 )
 
 from auth import CurrentUser
+from datetime import UTC, datetime
 
 router = APIRouter()
 
@@ -335,6 +337,42 @@ async def delete_access_mail_via_id(
 
     await db.delete(access_mail)
     await db.commit()
+
+
+@router.get('/access/{short_url}', response_model=AccessMailPublic)
+async def retrieve_access_approved_mails(
+    short_url: str,
+    db: Annotated[AsyncSession, Depends(get_url_db)]
+):
+    result = await db.execute(
+        select(models.Url)
+        .where(models.Url.short_url == short_url)
+    )
+    access_group = result.scalars().first()
+    access_group_id = access_group.access_group_id
+
+    if not access_group_id or datetime.now(UTC) > access_group.expires_at:
+        return AccessMailPublic(
+            emails=[],
+            open=True
+        )
+
+    result = await db.execute(
+        select(models.AccessMails.email)
+        .where(models.AccessMails.access_group_id == access_group_id)
+    )
+    approved_emails = result.scalars().all()
+
+    if not approved_emails:
+        return AccessMailPublic(
+            emails=[],
+            open=True
+        )
+
+    return AccessMailPublic(
+        emails=approved_emails,
+        open=False
+    )
 
 
     

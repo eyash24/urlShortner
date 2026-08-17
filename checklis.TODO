@@ -11,7 +11,7 @@ Backend:
     ✔ access_groups @done(26-08-16 12:29)
     ☐ analytics
     ✔ logs @done(26-08-16 14:09)
-    ☐ mail config
+    ✔ mail config @done(26-08-17 10:15)
     ✔ EER Diagram @done(26-08-15 14:27)
 
 Frontend:
@@ -31,7 +31,7 @@ Tasks:
     ☐ research on rate limit feature implementation
     ☐ research on fastapi pytest ( refer corey schafer's video )
     ☐ build analytics api 
-    ☐ add mailtrap server 
+    ✔ add mailtrap server @done(26-08-17 10:15)
 
     ☐ start angular basics 
     ☐ check out material UI 
