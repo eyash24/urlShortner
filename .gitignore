@@ -16,4 +16,4 @@ wheels/
 .lock
 
 # databas
-.db
+*.db
