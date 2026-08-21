@@ -48,8 +48,10 @@ class AccessMailResponse(AccessMails):
     updated_at: datetime
 
 class AccessMailPublic(BaseModel):
-    emails: list[EmailStr]
     open: bool
+
+class AccessMailCheckResponse(AccessMailPublic):
+    pass
 
 # Access Group Shema
 class AccessGroup(BaseModel):

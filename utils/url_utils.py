@@ -9,7 +9,6 @@ import models
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 async def create_short_url(
     db: AsyncSession
 ) -> str:
